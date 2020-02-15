@@ -6,7 +6,7 @@ const port = 8000;
 const moment = require('moment');
 const fs = require('fs');
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost', '167.172.248.184'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost', 'http://167.172.248.184'];
 
 app.use(cors({
   origin: function(origin, callback){
