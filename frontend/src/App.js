@@ -6,6 +6,15 @@ import BackgroundVideo from 'react-background-video-player';
 
 import { Box, Text } from "rebass";
 
+const { ENV } = process.env;
+
+const URLS = {
+  production: "http://167.172.248.184:8000",
+  default: "http://localhost:8000",
+};
+
+const serverUrl = URLS[ENV] || URLS.default;
+
 const FloatingText = ({ children }) => (
   <Text 
     textAlign="left"
@@ -24,7 +33,7 @@ function App() {
   const [videosList, setVideosList] = useState(null);
   
   useEffect(() => {
-    fetch("http://localhost:8000/schedule/from/Newark%20Broad%20Street/to/New%20York%20Penn%20Station")
+    fetch(`${serverUrl}/schedule/from/Newark%20Broad%20Street/to/New%20York%20Penn%20Station`)
       .then(res => res.json())
       .then(
         (result) => {
@@ -35,7 +44,7 @@ function App() {
         }
       );
 
-    fetch("http://localhost:8000/videos/list")
+    fetch(`${serverUrl}/videos/list`)
     .then(res => res.json())
     .then(
       (result) => {
@@ -65,7 +74,7 @@ function App() {
           playsInline={true}
           containerWidth={100}
           containerHeight={100}
-          src={`http://localhost:8000/videos/${selectedVideo}`}
+          src={`${serverUrl}/videos/${selectedVideo}`}
           poster={''}
           autoPlay={true}
           volume={0}
