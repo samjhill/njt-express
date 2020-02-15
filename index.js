@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const port = 8000;
 const moment = require('moment');
+const fs = require('fs');
 
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -33,5 +34,11 @@ app.get('/schedule/from/:fromStation/to/:toStation', async (req, res) => {
 
   res.send(trainsAfterNow);
 });
+
+app.get('/videos/list', (req, res) => {
+  res.send(fs.readdirSync('videos'));
+});
+
+app.use('/videos', express.static('videos'));
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
