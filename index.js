@@ -6,18 +6,7 @@ const port = 8000;
 const moment = require('moment');
 const fs = require('fs');
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost', 'http://167.172.248.184'];
-
-app.use(cors({
-  origin: function(origin, callback){
-    if(allowedOrigins.indexOf(origin) === -1){
-      var msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
-}));
+app.use(cors());
 
 const { Schedule, Stations } = NJTApi;
 

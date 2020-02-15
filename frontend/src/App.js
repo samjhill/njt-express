@@ -61,6 +61,9 @@ function App() {
   }
 
   const nextTrain = schedule[0];
+  if (!nextTrain) {
+    return <p>Error: no trains found</p>
+  }
   const departureTime = moment(nextTrain.origin.time, 'h:mma');
   const diff = departureTime.diff(moment());
   const diffDuration = moment.duration(diff);
