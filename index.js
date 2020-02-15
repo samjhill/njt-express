@@ -7,7 +7,7 @@ const moment = require('moment');
 const fs = require('fs');
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost']
+  origin: ['http://localhost:3000', 'http://localhost', '167.172.248.184']
 }));
 
 const { Schedule, Stations } = NJTApi;
