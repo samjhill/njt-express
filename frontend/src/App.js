@@ -6,14 +6,14 @@ import BackgroundVideo from 'react-background-video-player';
 
 import { Box, Text } from "rebass";
 
-const { ENV } = process.env;
+const { NODE_ENV } = process.env;
 
 const URLS = {
   production: "http://167.172.248.184:8000",
   default: "http://localhost:8000",
 };
 
-const serverUrl = URLS[ENV] || URLS.default;
+const serverUrl = URLS[NODE_ENV] || URLS.default;
 
 const FloatingText = ({ children }) => (
   <Text 
