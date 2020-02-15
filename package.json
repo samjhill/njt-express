@@ -1,0 +1,11 @@
+{
+  "name": "home-hub",
+  "version": "1.0.0",
+  "description": "status page for weather and upcoming trains",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "njt-api": "^1.7.0"
+  }
+}
