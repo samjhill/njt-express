@@ -36,6 +36,7 @@ function App() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoIsLoading, setVideoIsLoading] = useState(true);
   const [weather, setWeather] = useState(null);
+  const [pathTrainSchedule, setPathTrainSchedule] = useState(null);
 
   useEffect(() => {
     fetch(`${serverUrl}/schedule/from/Newark%20Broad%20Street/to/New%20York%20Penn%20Station`)
@@ -70,18 +71,44 @@ function App() {
           console.error(error);
         }
       );
-  }, [setSchedule, setVideosList, setWeather]);
+
+    fetch(`https://path.api.razza.dev/v1/stations/newark/realtime`)
+      .then(res => res.json())
+      .then(
+        (result) => 
+          setPathTrainSchedule(result),
+        (error) => {
+          console.error(error);
+        }
+      );
+  }, [setSchedule, setVideosList, setWeather, setPathTrainSchedule]);
 
   if (!schedule || !videosList) {
     return <p>Loading...</p>
   }
 
+  const TrainScheduleItem = ({ fromStation, toStation, trainNumber, departureTime }) => {
+    const departureTimeMoment = nextTrain && moment(departureTime, 'h:mma');
+    const diff = nextTrain && departureTimeMoment.diff(moment());
+    const diffDuration = nextTrain && moment.duration(diff);
+
+    return (
+      <Box 
+        m="4"
+        p="4"
+        style={{
+          zIndex: 1,
+          position: "relative"
+        }}
+      >
+        <FloatingText>
+          {fromStation} to {toStation} {trainNumber && <strong>#{trainNumber}</strong>} leaves in <strong>{diffDuration.minutes()} minutes</strong>, at <strong>{departureTimeMoment.format('h:mma')}</strong>.
+        </FloatingText>
+      </Box>
+    );
+  };
   const nextTrain = schedule[0];
-
-  const departureTime = nextTrain && moment(nextTrain.origin.time, 'h:mma');
-  const diff = nextTrain && departureTime.diff(moment());
-  const diffDuration = nextTrain && moment.duration(diff);
-
+  console.log(nextTrain)
   return (
     <div className="App">
         <Box>
@@ -123,18 +150,20 @@ function App() {
           </Box>
 
         {nextTrain && (
-          <Box 
-            m="4"
-            p="4"
-            style={{
-              zIndex: 1,
-              position: "absolute"
-            }}
-          >
-            <FloatingText>Broad Street to Penn Station <strong>#{nextTrain.origin.trainNumber}</strong></FloatingText>
+          <TrainScheduleItem 
+            fromStation="Broad Street" 
+            toStation="New York Penn" 
+            trainNumber={nextTrain.origin.trainNumber}
+            departureTime={nextTrain.origin.time}
+          />
+        )}
 
-            <FloatingText>leaves in <strong>{diffDuration.minutes()} minutes</strong>, at <strong>{departureTime.format('h:mma')}</strong>.</FloatingText>
-          </Box>
+        {pathTrainSchedule && (
+          <TrainScheduleItem 
+            fromStation="PATH from Newark Penn" 
+            toStation={pathTrainSchedule.upcomingTrains[0].headsign}
+            departureTime={moment(pathTrainSchedule.upcomingTrains[0].projectedArrival).format('h:mma')}
+          />
         )}
 
         {weather && (
@@ -152,7 +181,7 @@ function App() {
               flexDirection="column"
             >
               <FloatingText>
-                It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>
+                It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>.
               </FloatingText>
               <FloatingText ml="2">
                 {weather.current?.skytext}
