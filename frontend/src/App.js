@@ -4,7 +4,7 @@ import './App.css';
 import moment from 'moment';
 import BackgroundVideo from 'react-background-video-player';
 
-import { Box, Text } from "rebass";
+import { Box, Text, Flex } from "rebass";
 import { motion } from "framer-motion"
 
 const { NODE_ENV } = process.env;
@@ -35,6 +35,7 @@ function App() {
   const [videosList, setVideosList] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoIsLoading, setVideoIsLoading] = useState(true);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     fetch(`${serverUrl}/schedule/from/Newark%20Broad%20Street/to/New%20York%20Penn%20Station`)
@@ -49,29 +50,37 @@ function App() {
       );
 
     fetch(`${serverUrl}/videos/list`)
-    .then(res => res.json())
-    .then(
-      (result) => {
-        setVideosList(result);
-        setSelectedVideo(result[Math.floor(Math.random() * result.length)])
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }, [setSchedule, setVideosList]);
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setVideosList(result);
+          setSelectedVideo(result[Math.floor(Math.random() * result.length)])
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+    fetch(`${serverUrl}/weather`)
+      .then(res => res.json())
+      .then(
+        (result) => 
+          setWeather(result),
+        (error) => {
+          console.error(error);
+        }
+      );
+  }, [setSchedule, setVideosList, setWeather]);
 
   if (!schedule || !videosList) {
     return <p>Loading...</p>
   }
 
   const nextTrain = schedule[0];
-  if (!nextTrain) {
-    return <p>Error: no trains found</p>
-  }
-  const departureTime = moment(nextTrain.origin.time, 'h:mma');
-  const diff = departureTime.diff(moment());
-  const diffDuration = moment.duration(diff);
+
+  const departureTime = nextTrain && moment(nextTrain.origin.time, 'h:mma');
+  const diff = nextTrain && departureTime.diff(moment());
+  const diffDuration = nextTrain && moment.duration(diff);
 
   return (
     <div className="App">
@@ -88,41 +97,69 @@ function App() {
             }
             transition={{ duration: 1 }}
           >
-          <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
-            <BackgroundVideo 
-              playsInline={true}
-              containerWidth={100}
-              containerHeight={100}
-              src={`${serverUrl}/videos/${selectedVideo}`}
-              poster={''}
-              autoPlay={true}
-              volume={0}
-              style={{
-                zIndex: 0,
-              }}
-              loop={false}
-              onReady={() => {
-                setVideoIsLoading(false);
-              }}
-              onEnd={() => {
-                setVideoIsLoading(true);
-                setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
-              }}
-            />
-          </div>
+            <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
+              <BackgroundVideo 
+                playsInline={true}
+                containerWidth={100}
+                containerHeight={100}
+                src={`${serverUrl}/videos/${selectedVideo}`}
+                poster={''}
+                autoPlay={true}
+                volume={0}
+                style={{
+                  zIndex: 0,
+                }}
+                loop={false}
+                onReady={() => {
+                  setVideoIsLoading(false);
+                }}
+                onEnd={() => {
+                  setVideoIsLoading(true);
+                  setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
+                }}
+              />
+            </div>
           </motion.div>
           </Box>
-        <Box 
-        m="4"
-        p="4"
-        style={{
-          zIndex: 1,
-          position: "absolute"
-        }}>
-          <FloatingText>Broad Street to Penn Station <strong>#{nextTrain.origin.trainNumber}</strong></FloatingText>
 
-          <FloatingText>leaves in <strong>{diffDuration.minutes()} minutes</strong>, at <strong>{departureTime.format('h:mma')}</strong>.</FloatingText>
-        </Box>
+        {nextTrain && (
+          <Box 
+            m="4"
+            p="4"
+            style={{
+              zIndex: 1,
+              position: "absolute"
+            }}
+          >
+            <FloatingText>Broad Street to Penn Station <strong>#{nextTrain.origin.trainNumber}</strong></FloatingText>
+
+            <FloatingText>leaves in <strong>{diffDuration.minutes()} minutes</strong>, at <strong>{departureTime.format('h:mma')}</strong>.</FloatingText>
+          </Box>
+        )}
+
+        {weather && (
+          <motion.div 
+            transition={{ duration: 1 }}
+          >
+            <Flex 
+              m="4"
+              p="4"
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                bottom: 0
+              }}
+              flexDirection="column"
+            >
+              <FloatingText>
+                It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>
+              </FloatingText>
+              <FloatingText ml="2">
+                {weather.current?.skytext}
+              </FloatingText>
+            </Flex>
+          </motion.div>
+        )}
       </Box>
     </div>
   );

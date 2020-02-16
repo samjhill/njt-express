@@ -1,11 +1,12 @@
 const express = require('express');
 const NJTApi = require('njt-api');
-const app = express();
 const cors = require('cors');
-const port = 8000;
 const moment = require('moment');
+const weather = require('weather-js');
 const fs = require('fs');
 
+const port = 8000;
+const app = express();
 app.use(cors());
 
 const { Schedule, Stations } = NJTApi;
@@ -38,5 +39,13 @@ app.get('/videos/list', (req, res) => {
 });
 
 app.use('/videos', express.static('videos'));
+
+app.get('/weather', async (req, res) => {
+  weather.find({search: 'Newark, NJ', degreeType: 'F'}, (err, result) => {
+    if (err) console.log(err);
+   
+    res.send(result[0]);
+  });
+});
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
