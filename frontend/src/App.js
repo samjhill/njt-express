@@ -90,7 +90,7 @@ function App() {
   const TrainScheduleItem = ({ fromStation, toStation, trainNumber, departureTime }) => {
     const departureTimeMoment = nextTrain && moment(departureTime, 'h:mma');
     const diff = nextTrain && departureTimeMoment.diff(moment());
-    const diffDuration = nextTrain && moment.duration(diff);
+    const diffDuration = nextTrain && moment.duration(diff).minutes();
 
     return (
       <Box 
@@ -102,7 +102,7 @@ function App() {
         }}
       >
         <FloatingText>
-          {fromStation} to {toStation} {trainNumber && <strong>#{trainNumber}</strong>} leaves in <strong>{diffDuration.minutes()} minutes</strong>, at <strong>{departureTimeMoment.format('h:mma')}</strong>.
+          {fromStation} to {toStation} {trainNumber && <strong>#{trainNumber}</strong>} leaves in <strong>{diffDuration} {diffDuration === 1 ? "minute" : "minutes"}</strong>, at <strong>{departureTimeMoment.format('h:mma')}</strong>.
         </FloatingText>
       </Box>
     );
