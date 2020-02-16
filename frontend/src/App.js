@@ -107,8 +107,9 @@ function App() {
       </Box>
     );
   };
+
   const nextTrain = schedule[0];
-  console.log(nextTrain)
+
   return (
     <div className="App">
         <Box>
@@ -116,55 +117,61 @@ function App() {
               backgroundColor: "#333", 
               position: 'absolute', width: ' 100%', height: '100%'
             }}>
-          <motion.div 
-            animate={
-              videoIsLoading
-                ? { opacity: 0 }
-                : { opacity: 1 }
-            }
-            transition={{ duration: 1 }}
-          >
-            <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
-              <BackgroundVideo 
-                playsInline={true}
-                containerWidth={100}
-                containerHeight={100}
-                src={`${serverUrl}/videos/${selectedVideo}`}
-                poster={''}
-                autoPlay={true}
-                volume={0}
-                style={{
-                  zIndex: 0,
-                }}
-                loop={false}
-                onReady={() => {
-                  setVideoIsLoading(false);
-                }}
-                onEnd={() => {
-                  setVideoIsLoading(true);
-                  setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
-                }}
-              />
-            </div>
-          </motion.div>
+            <motion.div 
+              animate={
+                videoIsLoading
+                  ? { opacity: 0 }
+                  : { opacity: 1 }
+              }
+              transition={{ duration: 1 }}
+            >
+              <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
+                <BackgroundVideo 
+                  playsInline={true}
+                  containerWidth={100}
+                  containerHeight={100}
+                  src={`${serverUrl}/videos/${selectedVideo}`}
+                  poster={''}
+                  autoPlay={true}
+                  volume={0}
+                  style={{
+                    zIndex: 0,
+                  }}
+                  loop={false}
+                  onReady={() => {
+                    setVideoIsLoading(false);
+                  }}
+                  onEnd={() => {
+                    setVideoIsLoading(true);
+                    setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
+                  }}
+                />
+              </div>
+            </motion.div>
           </Box>
+        
+        <Box 
+          sx={{
+            position: 'absolute', width: ' 100%', height: '100%'
+          }}
+        >
+          {nextTrain && (
+            <TrainScheduleItem 
+              fromStation="Broad Street" 
+              toStation="New York Penn" 
+              trainNumber={nextTrain.origin.trainNumber}
+              departureTime={nextTrain.origin.time}
+            />
+          )}
 
-        {nextTrain && (
-          <TrainScheduleItem 
-            fromStation="Broad Street" 
-            toStation="New York Penn" 
-            trainNumber={nextTrain.origin.trainNumber}
-            departureTime={nextTrain.origin.time}
-          />
-        )}
-
-        {pathTrainSchedule && (
-          <TrainScheduleItem 
-            fromStation="PATH from Newark Penn" 
-            toStation={pathTrainSchedule.upcomingTrains[0].headsign}
-            departureTime={moment(pathTrainSchedule.upcomingTrains[0].projectedArrival).format('h:mma')}
-          />
-        )}
+          {pathTrainSchedule && (
+            <TrainScheduleItem 
+              fromStation="PATH from Newark Penn" 
+              toStation={pathTrainSchedule.upcomingTrains[0].headsign}
+              departureTime={moment(pathTrainSchedule.upcomingTrains[0].projectedArrival).format('h:mma')}
+            />
+          )}
+        </Box>
 
         {weather && (
           <motion.div 
