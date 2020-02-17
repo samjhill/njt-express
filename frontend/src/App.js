@@ -9,6 +9,7 @@ import { motion } from "framer-motion"
 
 import { TrainScheduleItem } from "./components/trainScheduleItem";
 import { FloatingText } from "./components/floatingText";
+import { UmbrellaSvgComponent } from "./components/svg/umbrella";
 
 const { NODE_ENV } = process.env;
 
@@ -27,7 +28,7 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [pathTrainSchedule, setPathTrainSchedule] = useState(null);
 
-  useEffect(() => {
+  const fetchData = useEffect(() => {
     fetch(`${serverUrl}/schedule/from/Newark%20Broad%20Street/to/New%20York%20Penn%20Station`)
       .then(res => res.json())
       .then(
@@ -70,12 +71,14 @@ function App() {
           console.error(error);
         }
       );
+
+    setTimeout(fetchData, 60000);
   }, [setSchedule, setVideosList, setWeather, setPathTrainSchedule]);
 
   if (!schedule || !videosList) {
     return <p>Loading...</p>
   }
-
+  
   const nextTrain = schedule[0];
   const toReturn = (
     <div className="App">
@@ -159,6 +162,28 @@ function App() {
               </FloatingText>
               <FloatingText ml="2">
                 {weather.current?.skytext}
+                {
+                  weather.forecast.find(
+                    forecast => forecast.day === moment().format('dddd')
+                  )
+                    .skytextday
+                    .toLowerCase()
+                    .indexOf('rain') > -1 && (
+                      <>
+                        <UmbrellaSvgComponent 
+                          fill="white" 
+                          width="200" 
+                          height="200" 
+                          style={{
+                            filter: "drop-shadow( 5px 5px #010101c7)",
+                            position: 'fixed',
+                            bottom: '2rem',
+                            right: '2rem'
+                          }}
+                        />
+                      </>
+                    )
+                }
               </FloatingText>
             </Flex>
           </motion.div>
@@ -173,7 +198,8 @@ function App() {
     return toReturn;
   } catch (e) {
     console.error(e);
-    window.location.reload();
+    setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
+    setVideoIsLoading(false);
   }
 }
 
