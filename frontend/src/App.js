@@ -4,28 +4,19 @@ import './App.css';
 import moment from 'moment';
 import BackgroundVideo from 'react-background-video-player';
 
-import { Box, Flex } from "rebass";
+import { Box } from "rebass";
 import { motion } from "framer-motion"
 
 import { TrainScheduleItem } from "./components/trainScheduleItem";
-import { FloatingText } from "./components/floatingText";
-import { UmbrellaSvgComponent } from "./components/svg/umbrella";
+import { Weather } from "./components/weather";
 
-const { NODE_ENV } = process.env;
-
-const URLS = {
-  production: "http://167.172.248.184:8000",
-  default: "http://localhost:8000",
-};
-
-const serverUrl = URLS[NODE_ENV] || URLS.default;
+import { serverUrl } from "./constants";
 
 function App() {
   const [schedule, setSchedule] = useState(null);
   const [videosList, setVideosList] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoIsLoading, setVideoIsLoading] = useState(true);
-  const [weather, setWeather] = useState(null);
   const [pathTrainSchedule, setPathTrainSchedule] = useState(null);
 
   const fetchData = useEffect(() => {
@@ -52,16 +43,6 @@ function App() {
         }
       );
 
-    fetch(`${serverUrl}/weather`)
-      .then(res => res.json())
-      .then(
-        (result) => 
-          setWeather(result),
-        (error) => {
-          console.error(error);
-        }
-      );
-
     fetch(`https://path.api.razza.dev/v1/stations/newark/realtime`)
       .then(res => res.json())
       .then(
@@ -73,7 +54,7 @@ function App() {
       );
 
     setTimeout(fetchData, 60000);
-  }, [setSchedule, setVideosList, setWeather, setPathTrainSchedule]);
+  }, [setSchedule, setVideosList, setPathTrainSchedule]);
 
   if (!schedule || !videosList) {
     return <p>Loading...</p>
@@ -143,51 +124,7 @@ function App() {
           )}
         </Box>
 
-        {weather && (
-          <motion.div 
-            transition={{ duration: 1 }}
-          >
-            <Flex 
-              m="4"
-              p="4"
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                bottom: 0
-              }}
-              flexDirection="column"
-            >
-              <FloatingText>
-                It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>.
-              </FloatingText>
-              <FloatingText ml="2">
-                {weather.current?.skytext}
-                {
-                  weather.forecast.find(
-                    forecast => forecast.day === moment().format('dddd')
-                  )
-                    .skytextday
-                    .toLowerCase()
-                    .indexOf('rain') > -1 && (
-                      <>
-                        <UmbrellaSvgComponent 
-                          fill="white" 
-                          width="200" 
-                          height="200" 
-                          style={{
-                            filter: "drop-shadow( 5px 5px #010101c7)",
-                            position: 'fixed',
-                            bottom: '2rem',
-                            right: '2rem'
-                          }}
-                        />
-                      </>
-                    )
-                }
-              </FloatingText>
-            </Flex>
-          </motion.div>
-        )}
+        <Weather />
       </Box>
     </div>
   );
@@ -198,8 +135,7 @@ function App() {
     return toReturn;
   } catch (e) {
     console.error(e);
-    setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
-    setVideoIsLoading(false);
+    window.location.reload();
   }
 }
 
