@@ -4,8 +4,11 @@ import './App.css';
 import moment from 'moment';
 import BackgroundVideo from 'react-background-video-player';
 
-import { Box, Text, Flex } from "rebass";
+import { Box, Flex } from "rebass";
 import { motion } from "framer-motion"
+
+import { TrainScheduleItem } from "./components/trainScheduleItem";
+import { FloatingText } from "./components/floatingText";
 
 const { NODE_ENV } = process.env;
 
@@ -15,20 +18,6 @@ const URLS = {
 };
 
 const serverUrl = URLS[NODE_ENV] || URLS.default;
-
-const FloatingText = ({ children }) => (
-  <Text 
-    textAlign="left"
-    fontSize="8" 
-    color="white" 
-    fontFamily="'Roboto', sans-serif"
-    sx={{
-      textShadow: "5px 5px #010101c7",
-    }}
-  >
-    {children}
-  </Text>
-);
 
 function App() {
   const [schedule, setSchedule] = useState(null);
@@ -87,30 +76,8 @@ function App() {
     return <p>Loading...</p>
   }
 
-  const TrainScheduleItem = ({ fromStation, toStation, trainNumber, departureTime }) => {
-    const departureTimeMoment = nextTrain && moment(departureTime, 'h:mma');
-    const diff = nextTrain && departureTimeMoment.diff(moment());
-    const diffDuration = nextTrain && moment.duration(diff).minutes();
-
-    return (
-      <Box 
-        m="4"
-        p="4"
-        style={{
-          zIndex: 1,
-          position: "relative"
-        }}
-      >
-        <FloatingText>
-          {fromStation} to {toStation} {trainNumber && <strong>#{trainNumber}</strong>} leaves in <strong>{diffDuration} {diffDuration === 1 ? "minute" : "minutes"}</strong>, at <strong>{departureTimeMoment.format('h:mma')}</strong>.
-        </FloatingText>
-      </Box>
-    );
-  };
-
   const nextTrain = schedule[0];
-
-  return (
+  const toReturn = (
     <div className="App">
         <Box>
           <Box sx={{
@@ -199,6 +166,15 @@ function App() {
       </Box>
     </div>
   );
+  
+  // we're running into an occasional weird error with the background video player
+  // https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
+  try {
+    return toReturn;
+  } catch (e) {
+    console.error(e);
+    window.location.reload();
+  }
 }
 
 export default App;
