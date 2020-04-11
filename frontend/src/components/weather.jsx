@@ -19,9 +19,8 @@ export const Weather = () => {
           console.error(error);
         }
       );
-
-    setTimeout(fetchData, 60000);
   }, [setWeather]);
+  setInterval(fetchData, 60000);
 
   if (!weather) {
     return <p>Loading...</p>
@@ -42,7 +41,8 @@ export const Weather = () => {
         It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>.
       </FloatingText>
       <FloatingText ml="2">
-        {weather.current?.skytext}
+        {weather.current?.skytext},
+        wind {weather.current?.winddisplay}
         {
           weather.forecast.find(
             forecast => forecast.day === moment().format('dddd')

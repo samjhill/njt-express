@@ -7,7 +7,9 @@ export const TrainScheduleItem = ({ fromStation, toStation, trainNumber, departu
   const departureTimeMoment = moment(departureTime, 'h:mma');
   const diff = departureTimeMoment.diff(moment());
   const diffDuration = moment.duration(diff).minutes();
-
+  if (diffDuration < 0) {
+    return null;
+  }
   return (
     <Box 
       m="4"

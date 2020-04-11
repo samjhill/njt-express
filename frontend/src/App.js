@@ -52,9 +52,8 @@ function App() {
           console.error(error);
         }
       );
-
-    setTimeout(fetchData, 60000);
   }, [setSchedule, setVideosList, setPathTrainSchedule]);
+  setInterval(fetchData, 60000);
 
   if (!schedule || !videosList) {
     return <p>Loading...</p>
@@ -117,7 +116,7 @@ function App() {
 
           {pathTrainSchedule && (
             <TrainScheduleItem 
-              fromStation="PATH from Newark Penn" 
+              fromStation="PATH Newark Penn" 
               toStation={pathTrainSchedule.upcomingTrains[0].headsign}
               departureTime={moment(pathTrainSchedule.upcomingTrains[0].projectedArrival).format('h:mma')}
             />
@@ -136,6 +135,8 @@ function App() {
   } catch (e) {
     console.error(e);
     window.location.reload();
+    setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
+    setVideoIsLoading(false);
   }
 }
 

@@ -44,7 +44,7 @@ app.get('/weather', async (req, res) => {
   weather.find({search: 'Newark, NJ', degreeType: 'F'}, (err, result) => {
     if (err) console.log(err);
    
-    res.send(results.length ? result[0] : result);
+    res.send(result.length ? result[0] : result);
   });
 });
 

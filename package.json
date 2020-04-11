@@ -4,6 +4,9 @@
   "description": "status page for weather and upcoming trains",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "run": "node index.js && yarn dev"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
