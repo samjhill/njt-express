@@ -7,8 +7,9 @@ export const FloatingText = ({ children }) => (
     fontSize="8" 
     color="white" 
     fontFamily="'Roboto', sans-serif"
+    border="1px solid white"
     sx={{
-      textShadow: "5px 5px #010101c7",
+      textShadow: "1px 1px 7px #010101c7",
     }}
   >
     {children}
