@@ -6,6 +6,7 @@ import { FloatingText } from './floatingText';
 export const Clock = () => {
   const currentTime = moment();
   const formattedTime = currentTime.format("hh:mma");
+  const formattedDate = currentTime.format("dddd, MMMM d");
 
   return (
     <Flex 
@@ -16,9 +17,10 @@ export const Clock = () => {
         position: "absolute",
         right: 0
       }}
-      // flexDirection="column"
+      flexDirection="column"
     >
       <FloatingText>{formattedTime}</FloatingText>
+      <FloatingText>{formattedDate}</FloatingText>
     </Flex>
   );
 };
