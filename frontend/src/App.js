@@ -9,7 +9,7 @@ import { motion } from "framer-motion"
 
 import { TrainScheduleItem } from "./components/trainScheduleItem";
 import { Weather } from "./components/weather";
-
+import { Clock } from "./components/clock";
 import { serverUrl } from "./constants";
 
 function App() {
@@ -100,6 +100,8 @@ function App() {
             </motion.div>
           </Box>
         
+        <Clock />
+
         <Box 
           sx={{
             position: 'absolute', width: ' 100%', height: '100%'

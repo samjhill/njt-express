@@ -18,6 +18,7 @@ export const TrainScheduleItem = ({ fromStation, toStation, trainNumber, departu
         zIndex: 1,
         position: "relative"
       }}
+      maxWidth="1000px"
     >
       <FloatingText>
         {fromStation} to {toStation} {trainNumber && <strong>#{trainNumber}</strong>} leaves in <strong>{diffDuration} {diffDuration === 1 ? "minute" : "minutes"}</strong>, at <strong>{departureTimeMoment.format('h:mma')}</strong>.
