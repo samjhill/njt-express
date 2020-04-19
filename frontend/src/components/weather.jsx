@@ -63,7 +63,7 @@ export const Weather = () => {
                   width="200" 
                   height="200" 
                   style={{
-                    filter: "drop-shadow(1px 1px 7px #010101c7)",
+                    filter: "drop-shadow(5px 5px #010101c7)",
                     position: 'fixed',
                     bottom: '2rem',
                     right: '2rem'
