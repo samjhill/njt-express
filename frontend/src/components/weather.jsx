@@ -38,7 +38,14 @@ export const Weather = () => {
       flexDirection="column"
     >
       <FloatingText>
-        It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>.
+        {weather.current?.temperature !== weather.current?.feelslike ? (
+          <>It's <strong>{weather.current?.temperature}°</strong>, but it feels like <strong>{weather.current?.feelslike}°</strong>.</>
+        ): 
+        (
+          <>It's <strong>{weather.current?.temperature}°</strong> outside.</>
+        )
+        }
+        
       </FloatingText>
       <FloatingText ml="2">
         {weather.current?.skytext},

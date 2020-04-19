@@ -137,8 +137,8 @@ function App() {
   } catch (e) {
     console.error(e);
     window.location.reload();
-    setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
-    setVideoIsLoading(false);
+    // setSelectedVideo(videosList[Math.floor(Math.random() * videosList.length)]);
+    // setVideoIsLoading(false);
   }
 }
 
